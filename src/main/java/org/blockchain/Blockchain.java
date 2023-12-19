@@ -11,11 +11,15 @@ public class Blockchain {
     public Blockchain(int difficulty){
         this.validate = new Validate();
         this.difficulty = difficulty;
-
         blockchain = new ArrayList<>();
-        Block block = new Block("Initial Block", "0");
-        validate.mineBlock(difficulty, block);
-        blockchain.add(block);
+
+        initializeBlockchain();
+    }
+
+    private void initializeBlockchain() {
+        Block initialBlock = new Block("Initial Block", "0");
+        validate.mineBlock(difficulty, initialBlock);
+        blockchain.add(initialBlock);
     }
 
     public void addBlock(String data){

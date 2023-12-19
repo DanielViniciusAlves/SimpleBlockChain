@@ -1,60 +1,44 @@
 package org.blockchain;
 
-import java.util.ArrayList;
-import com.google.gson.GsonBuilder;
+import java.util.Scanner;
+
 public class Main {
-    public static ArrayList<Block> blockchain = new ArrayList<Block>();
-    private static int difficulty = 5;
+    public static Blockchain blockchain;
 
     public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.print("Enter blockchain difficulty: ");
+        int difficulty = scanner.nextInt();
+        blockchain = new Blockchain(difficulty);
+
         System.out.println("Starting blockchain");
 
-        System.out.println("Starting block.");
-        blockchain.add(new Block("First block", "0"));
-        System.out.println("Mining");
-        blockchain.get(0).mineBlock(difficulty);
+        while (true) {
+            System.out.println("\nMenu:");
+            System.out.println("1. Add a block");
+            System.out.println("2. Display blockchain");
+            System.out.println("3. Exit");
+            System.out.print("Enter your choice: ");
 
-        blockchain.add(new Block("Second Block",blockchain.get(blockchain.size()-1).hash));
-        System.out.println("Mining");
-        blockchain.get(1).mineBlock(difficulty);
+            int choice = scanner.nextInt();
 
-        blockchain.add(new Block("Third blovk",blockchain.get(blockchain.size()-1).hash));
-        System.out.println("Mining");
-        blockchain.get(2).mineBlock(difficulty);
-
-        System.out.println("\nBlockchain is Valid: " + isValid());
-
-        String blockchainJson = new GsonBuilder().setPrettyPrinting().create().toJson(blockchain);
-        System.out.println("\nThe block chain: ");
-        System.out.println(blockchainJson);
-    }
-
-    public static boolean isValid(){
-        Block currentBlock;
-        Block previousBlock;
-
-        String target = new String(new char[difficulty]).replace("\0", "0");
-        for (int i=1; i < blockchain.size(); i++){
-            currentBlock = blockchain.get(i);
-            previousBlock = blockchain.get(i - 1);
-
-            if(!currentBlock.hash.equals(currentBlock.calculateHash())){
-                System.out.println("Invalid hash in current block.");
-                return false;
-            }
-
-            if(!previousBlock.hash.equals(currentBlock.previousHash)){
-                System.out.println("Invalid hash in previous block.");
-                return false;
-            }
-
-            if(!currentBlock.hash.substring(0, difficulty).equals(target)){
-                System.out.println("This block hasn't be mined.");
-                return false;
+            switch (choice) {
+                case 1:
+                    scanner.nextLine();
+                    System.out.print("Enter data for the new block: ");
+                    String data = scanner.nextLine();
+                    blockchain.addBlock(data);
+                    break;
+                case 2:
+                    blockchain.display();
+                    break;
+                case 3:
+                    System.out.println("Exiting program. Goodbye!");
+                    System.exit(0);
+                default:
+                    System.out.println("Invalid choice. Please enter a valid option.");
             }
         }
-
-        System.out.println("Valid hash.");
-        return true;
     }
 }

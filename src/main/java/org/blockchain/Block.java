@@ -2,46 +2,41 @@ package org.blockchain;
 
 import org.blockchain.utils.StringUtil;
 
+import java.security.SecureRandom;
 import java.util.Date;
 
 public class Block {
-    public String previousHash;
-    public String hash;
-    private String data;
-    private long timestamp;
     private int nonce;
+    private String hash;
+    private final String previousHash;
+    private final String data;
+    private final long timestamp;
 
     public Block(String data, String previousHash){
        this.previousHash = previousHash;
-       this.hash = hash;
        this.data = data;
        this.timestamp = new Date().getTime();
-
-       this.hash = generateHash();
-    }
-
-    public String generateHash(){
-        String newHash = StringUtil.addSha256(
-                this.hash + this.data + Long.toString(this.timestamp)
-        );
-
-        return newHash;
+       this.hash = calculateHash();
     }
 
     public String calculateHash(){
-        String hash = previousHash + Long.toString(timestamp) + Integer.toString(nonce) + data;
-        return StringUtil.addSha256(hash);
+        return StringUtil.addSha256( previousHash + timestamp + nonce + data );
     }
 
-    public void mineBlock(int difficulty){
-        // Creating string with 0 with size equals to difficulty
-        String difficultyString = new String(new char[difficulty]).replace('\0', '0');
-
-        while(!hash.substring(0, difficulty).equals(difficultyString)){
-            nonce++;
-            hash =  calculateHash();
-        }
-        System.out.println("Block mined.");
+    public void generateNonce(){
+        SecureRandom rand = new SecureRandom();
+        nonce = Math.abs(rand.nextInt());
     }
 
+    public String getHash() {
+        return hash;
+    }
+
+    public void setHash(String hash) {
+        this.hash = hash;
+    }
+
+    public String getPreviousHash() {
+        return previousHash;
+    }
 }
